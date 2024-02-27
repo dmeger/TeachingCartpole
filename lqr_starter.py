@@ -7,13 +7,13 @@
 # Here is the provided LQR function
 import scipy.linalg
 import numpy as np
-def lqr( A, B, Q, R ):	
-	x = scipy.linalg.solve_continuous_are( A, B, Q, R )
+def lqr(A, B, Q, R):
+	x = scipy.linalg.solve_continuous_are(A, B, Q, R)
 	k = np.linalg.inv(R) * np.dot( B.T, x )
 	return k
 
 # FOR YOU TODO: Fill in the values for A, B, Q and R here.
-# Note that they should be matrices not scalars. 
+# Note that they should be matrices not scalars.
 # Then, figure out how to apply the resulting k
 # to solve for a control, u, within the policyfn that balances the cartpole.
 A = np.array([[ 1, 0, 0, 0 ],
