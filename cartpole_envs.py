@@ -4,7 +4,6 @@ import numpy as np
 
 from scipy.integrate import ode
 
-
 # Env Configuration
 BLACK = (0,0,0)
 DARK_RED = (150, 0, 0)
@@ -15,12 +14,11 @@ POLE_LENGTH = 100
 SCALE_X = 100.0
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 400
 
-
 # A simple class to simulate cartpole physics using an ODE solver
 class CartPole(object):
 
     # State holds x, x_dot, theta_dot, theta (radians)
-    def __init__(self, x0=[0.0, 0.0, 0.0, np.pi + np.pi / 40]):
+    def __init__(self, x0=[0.0, 0.0, 0.0, np.pi], initial_offset=0.0):
         self.g = 9.82
         self.m = 0.5
         self.M = 0.5
@@ -29,6 +27,7 @@ class CartPole(object):
 
         self.x0 = np.array(x0, dtype=np.float64).flatten()
         self.x = self.x0
+        self.x[3] = self.x[3] + initial_offset
         self.t = 0
 
         self.u = 0
@@ -111,26 +110,21 @@ class CartPole(object):
 
 
 # A simple class to simulate double cartpole physics using an ODE solver
-class DoubleCartPole(object):
-
-    # State holds x, x_dot, theta_dot, theta (radians)
-    def __init__(self, x_init=[0.0, 0, 0, 0, np.pi, np.pi]):
-        """Initialize a double cartpole class.
-
-        TODO: Pole angles are different compared to regular cartpole.
-
-        Args:
-            x0 (list, optional): Initial state. Defaults to [0.0, 0, 0, 0, 0, np.pi / 8].
-
-            Note: The initial state specifies the average starting state change this if you
-            want to do swing-up. The meaning of the state dimensions are:
+"""The meaning of the state dimensions are:
                 x[0] : cart position (x)
                 x[1] : cart velocity (x_dot)
                 x[2] : pole 1 angular velocity
                 x[3] : pole 2 angular velocity
                 x[4] : pole 1 angle
                 x[5] : pole 2 angle
-        """
+"""
+class DoubleCartPole(object):
+
+    def __init__(self, x_init=[0.0, 0.0, 0.0, 0.0, np.pi, np.pi], initial_offset=0.0):
+        
+        self.x_init = x_init
+        self.x_init[4] = self.x_init[4] + initial_offset
+        self.x_init[5] = self.x_init[5] + initial_offset
         self.g = 9.82
         self.m = 0.5
         self.M = 0.5
@@ -194,11 +188,11 @@ class DoubleCartPole(object):
         b  = 0.1;  # [Ns/m]   coefficient of friction between cart and ground
         g  = -9.82; # [m/s^2]  acceleration of gravity
 
-        A = np.mat( [ [ 2*(m1+m2+m3), -(m2+2*m3)*l2*math.cos(z[4]), -m3*l3*math.cos(z[5])],
+        A = np.asmatrix( [ [ 2*(m1+m2+m3), -(m2+2*m3)*l2*math.cos(z[4]), -m3*l3*math.cos(z[5])],
                       [ -(3*m2+6*m3)*math.cos(z[4]), (2*m2+6*m3)*l2, 3*m3*l3*math.cos(z[4]-z[5])],
                       [  -3*math.cos(z[5]), 3*l2*math.cos(z[4]-z[5]), 2*l3] ] )
 
-        b = np.mat( [ [ 2*f[0]-2*b*z[1]-(m2+2*m3)*l2*z[2]*z[2]*math.sin(z[4])-m3*l3*z[3]*z[3]*math.sin(z[5])],
+        b = np.asmatrix( [ [ 2*f[0]-2*b*z[1]-(m2+2*m3)*l2*z[2]*z[2]*math.sin(z[4])-m3*l3*z[3]*z[3]*math.sin(z[5])],
        [(3*m2+6*m3)*g*math.sin(z[4])-3*m3*l3*z[3]*z[3]*math.sin(z[4]-z[5])],
        [3*l2*z[2]*z[2]*math.sin(z[4]-z[5])+3*g*math.sin(z[5])  ] ]   )
 

@@ -2,6 +2,9 @@ import math
 import numpy as np
 import scipy.linalg
 
+# Uncomment this line if you want to use our LQR starter/library code
+#import lqr_starter
+
 class Controller:
     def __init__(self) -> None:
         # TODO: Fill in based on controller specifications.

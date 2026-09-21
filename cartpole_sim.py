@@ -74,6 +74,8 @@ def setup_parser():
         help='Switch between single and double cartpole envs: CartPole, DoubleCartPole.')
     parser.add_argument('--refresh-rate', type=int, default=240, help='GUI refresh rate.')
     parser.add_argument('--control-rate', type=int, default=1, help='Control input will be applied once per timestep by default!')
+    parser.add_argument('--initial-offset', type=float, default=np.pi/40.0,
+            help='Set an initial offset for the pole angle.')
 
     # Data collection tools
     parser.add_argument('--data-collection', action='store_true', default=False,
@@ -90,7 +92,7 @@ def setup_parser():
                         help='Maximum control input for sampling from a uniform distribution.')
     parser.add_argument('--dataset-name', type=str, default='dynamics-data',
         help='Pick a name for the collected dataset.')
-
+    
     return parser
 
 # Save a numpy array of data
@@ -110,7 +112,7 @@ if __name__ == '__main__':
     # Starting here is effectively the main function.
     # It's a simple GUI drawing loop that calls to your code to compute the control, sets it to the
     # cartpole class and loops the GUI to show what happened.
-    pendulum = CartPole() if args.env == 'CartPole' else DoubleCartPole()
+    pendulum = CartPole(initial_offset=args.initial_offset) if args.env == 'CartPole' else DoubleCartPole(initial_offset=args.initial_offset)
     state = pendulum.get_state()
     controller = Controller()
 
